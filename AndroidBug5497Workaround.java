@@ -22,7 +22,7 @@ public class AndroidBug5497Workaround {
         frameLayoutParams = (FrameLayout.LayoutParams) mChildOfContent.getLayoutParams();
     }
 
-	@SuppressLint("NewApi")
+    @SuppressLint("NewApi")
     private void possiblyResizeChildOfContent() {
         int usableHeightNow = computeUsableHeight();
         if (usableHeightNow != usableHeightPrevious) {
@@ -51,7 +51,7 @@ public class AndroidBug5497Workaround {
         return (r.bottom - r.top);
     }
 
-	private void setPrivateField(Object object, String fieldName, Object value) {
+    private void setPrivateField(Object object, String fieldName, Object value) {
 		try {
 			Class<?> clazz = Class.forName(View.class.getName());
 			Field field = clazz.getDeclaredField(fieldName);

@@ -22,6 +22,7 @@ public class AndroidBug5497Workaround {
         frameLayoutParams = (FrameLayout.LayoutParams) mChildOfContent.getLayoutParams();
     }
 
+    @SuppressLint("NewApi")
     private void possiblyResizeChildOfContent() {
         int usableHeightNow = computeUsableHeight();
         if (usableHeightNow != usableHeightPrevious) {
@@ -34,6 +35,11 @@ public class AndroidBug5497Workaround {
                 // keyboard probably just became hidden
                 frameLayoutParams.height = usableHeightSansKeyboard;
             }
+            if (Build.VERSION.SDK_INT >= 11) {
+                mChildOfContent.setBottom(frameLayoutParams.height);
+            } else {
+                setPrivateField(mChildOfContent, "mBottom", frameLayoutParams.height);
+            }
             mChildOfContent.requestLayout();
             usableHeightPrevious = usableHeightNow;
         }
@@ -43,6 +49,23 @@ public class AndroidBug5497Workaround {
         Rect r = new Rect();
         mChildOfContent.getWindowVisibleDisplayFrame(r);
         return (r.bottom - r.top);
+    }
+
+    private void setPrivateField(Object object, String fieldName, Object value) {
+        try {
+            Class<?> clazz = Class.forName(View.class.getName());
+            Field field = clazz.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(object, value);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
     }
 
 }

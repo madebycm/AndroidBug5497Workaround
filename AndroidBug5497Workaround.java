@@ -9,7 +9,7 @@ import android.widget.FrameLayout;
 public class AndroidBug5497Workaround {
     private static final String TAG = "aBug5497";
 
-    // For more information, see https://issuetracker.google.com/issues/36911528
+    // For more information, see https://code.google.com/p/android/issues/detail?id=5497
     // To use this class, simply invoke assistActivity() on an Activity that already has its content view set.
 
     private View mChildOfContent;

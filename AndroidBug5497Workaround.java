@@ -57,10 +57,12 @@ public class AndroidBug5497Workaround {
                         Log.d(TAG,"Software keyboard is open");
                     }
                     frameLayoutParams.height = usableHeightSansKeyboard - heightDifference;
-                    frameLayoutParams.topMargin = getStatusBarHeight();
                     
-                    activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-                    activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+                    //frameLayoutParams.topMargin = getStatusBarHeight(activity);
+                    //((CustomActivity)activity).setFullscreenWithStatusbarHeight(getStatusBarHeight(activity), true);//Make your own Method....
+                    
+                    activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);//could be handled by activity...
+                    activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);//could be handled by activity...
                     
                 } else {
                     // keyboard is hidden
@@ -86,12 +88,13 @@ public class AndroidBug5497Workaround {
                     // keyboard is hidden
                     if(usableHeightPrevious != 0) {
                         frameLayoutParams.height = usableHeightSansKeyboard;
-                        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-                        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);//could be handled by activity...
+                        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);//could be handled by activity...
 
                     }
 
-                    frameLayoutParams.topMargin = 0;
+                    //frameLayoutParams.topMargin = 0;
+                    //((CustomActivity)activity).setKeyboardViewWithStatusbarHeight(getStatusBarHeight(activity), false);//Make your own Method....
 
                     if(BuildConfig.DEBUG) {
                         Log.d(TAG, "Software Keyboard is closed");
@@ -118,9 +121,25 @@ public class AndroidBug5497Workaround {
         return (r.bottom - r.top);
     }
 
-    public int getStatusBarHeight() {
-        Rect r = new Rect();
-        mChildOfContent.getWindowVisibleDisplayFrame(r);
-        return r.top;
+
+    public static int getStatusBarHeight(Activity activity){
+
+        int result = 0;
+        int resourceId = activity.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = activity.getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
+    }
+
+    // unused and made for example puroses 
+    public static int getNavigationBarHeight(Activity activity){
+
+        int result = 0;
+        int resourceId = activity.getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = activity.getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 }

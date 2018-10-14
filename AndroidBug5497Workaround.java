@@ -132,14 +132,32 @@ public class AndroidBug5497Workaround {
         return result;
     }
 
-    // unused and made for example puroses 
+    // https://stackoverflow.com/a/34092477/1815624
     public static int getNavigationBarHeight(Activity activity){
-
+        boolean hasMenuKey = ViewConfiguration.get(activity).hasPermanentMenuKey();
+        boolean hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
         int result = 0;
-        int resourceId = activity.getResources().getIdentifier("navigation_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = activity.getResources().getDimensionPixelSize(resourceId);
+        if(!hasMenuKey && !hasBackKey) {
+            Resources resources = activity.getResources();
+
+            int orientation = resources.getConfiguration().orientation;
+            int resourceId;
+            if (isTablet(activity)){
+                resourceId = resources.getIdentifier(orientation == Configuration.ORIENTATION_PORTRAIT ? "navigation_bar_height" : "navigation_bar_height_landscape", "dimen", "android");
+            } else {
+                resourceId = resources.getIdentifier(orientation == Configuration.ORIENTATION_PORTRAIT ? "navigation_bar_height" : "navigation_bar_width", "dimen", "android");
+            }
+            if (resourceId > 0) {
+                result = activity.getResources().getDimensionPixelSize(resourceId);
+            }
         }
         return result;
+    }
+
+    //https://stackoverflow.com/a/29938139/1815624   
+    private static boolean isTablet(Context c) {
+        return (c.getResources().getConfiguration().screenLayout
+                & Configuration.SCREENLAYOUT_SIZE_MASK)
+                >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 }
